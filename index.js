@@ -1,12 +1,3 @@
-/**
- *
- * Author:  George Simos - georgesimos.com
- *
- * License: Copyright (c) 2019 George Simos
- * @link https://github.com/georgesimos/nodejs-mvc-starter
- *
- */
-
 import express from 'express';
 import logger from 'morgan';
 import dotenv from 'dotenv';
@@ -30,10 +21,6 @@ app.use(express.urlencoded({ extended: true }));
 
 app.disable('x-powered-by');
 app.use(expressStatusMonitor());
-app.use((req, res, next) => {
-  res.locals.user = req.user;
-  next();
-});
 
 // Here we define the api routes
 app.use(routes);

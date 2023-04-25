@@ -1,8 +1,7 @@
-import exporess from 'express';
-import auth from '../../config/auth';
-import { logoutAll, logout, login } from '../../controllers/auth';
+import express from 'express';
+import { login, register } from '../../controllers/auth';
 
-const router = exporess.Router();
+const router = express.Router();
 
 /**
  * @route   POST /auth/login
@@ -12,17 +11,10 @@ const router = exporess.Router();
 router.post('/login', login);
 
 /**
- * @route   POST /auth/logout
- * @desc    Logout a user
- * @access  Private
+ * @route   POST /auth/register
+ * @desc    Register a new user
+ * @access  Public
  */
-router.post('/logout', auth, logout);
-
-/**
- * @route   POST /auth/logoutAll
- * @desc    Logout a user from all devices
- * @access  Private
- */
-router.post('/logoutAll', auth, logoutAll);
+router.post('/register', register);
 
 export default router;

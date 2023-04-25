@@ -17,30 +17,17 @@ export const login = async (req, res) => {
 };
 
 /**
- * @desc Logout a user
+ * @desc Register a user
  */
-export const logout = async (req, res) => {
-  const { user } = req;
-  try {
-    user.tokens = user.tokens.filter(token => {
-      return token.token !== req.token;
-    });
-    await user.save();
-    res.send({ message: 'You have successfully logged out!' });
-  } catch (e) {
-    res.status(400).send(e);
-  }
-};
-
-/**
- * @desc Logout a user from all devices
- */
-export const logoutAll = async (req, res) => {
-  try {
-    req.user.tokens = [];
-    await req.user.save();
-    res.send({ message: 'You have successfully logged out!' });
-  } catch (e) {
-    res.status(400).send(e);
-  }
+export const register = async (req, res) => {
+  // const { user } = req;
+  // try {
+  //   user.tokens = user.tokens.filter(token => {
+  //     return token.token !== req.token;
+  //   });
+  //   await user.save();
+  //   res.send({ message: 'You have successfully logged out!' });
+  // } catch (e) {
+  //   res.status(400).send(e);
+  // }
 };
