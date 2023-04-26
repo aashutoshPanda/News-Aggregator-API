@@ -1,77 +1,42 @@
-// import mongoose from 'mongoose'
-// import bcrypt from 'bcryptjs'
-// import jwt from 'jsonwebtoken'
+import mongoose from "mongoose";
+const Schema = mongoose.Schema;
 
-// const { Schema } = mongoose;
+/**
+ * User Schema
+ */
+const userSchema = new Schema({
+  fullName: {
+    type: String,
+    required: [true, "fullname not provided "],
+  },
+  email: {
+    type: String,
+    unique: [true, "email already exists in database!"],
+    lowercase: true,
+    trim: true,
+    required: [true, "email not provided"],
+    validate: {
+      validator: function (email) {
+        const re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        return re.test(email);
+      },
+      message: "{VALUE} is not a valid email!",
+    },
+  },
+  role: {
+    type: String,
+    enum: ["NORMAL", "ADMIN"],
+    required: [true, "Please specify user role"],
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  created: {
+    type: Date,
+    default: Date.now,
+  },
+});
 
-// const userSchema = Schema(
-//   {
-//     name: String,
-//     email: { type: String, unique: true },
-//     password: String,
-//     role: {
-//       type: String,
-//       default: 'guest',
-//       enum: ['guest', 'admin', 'superadmin'],
-//     },
-//     tokens: [{ token: { type: String, required: true } }],
-//   },
-//   { timestamps: true }
-// );
-
-// /**
-//  * Password hash middleware.
-//  */
-// userSchema.pre('save', async function(next) {
-//   const user = this;
-//   if (user.isModified('password')) {
-//     const salt = await bcrypt.genSalt(10);
-//     user.password = await bcrypt.hash(user.password, salt);
-//   }
-//   next();
-// });
-
-// /**
-//  * Hide properties of Mongoose User object.
-//  */
-// userSchema.methods.toJSON = function() {
-//   const user = this;
-//   const userObject = user.toObject();
-//   if (!userObject.role === 'superadmin') {
-//     delete userObject.updatedAt;
-//     delete userObject.__v;
-//   }
-//   delete userObject.password;
-//   delete userObject.tokens;
-
-//   return userObject;
-// };
-
-// /**
-//  * Helper method for generating Auth Token
-//  */
-// userSchema.methods.generateAuthToken = async function() {
-//   const user = this;
-//   const token = jwt.sign({ _id: user._id.toString() }, process.env.JWT_SECRET, { expiresIn: '1h' });
-//   user.tokens = user.tokens.concat({ token });
-//   await user.save();
-//   return token;
-// };
-
-// /**
-//  * Helper static method for finding user by credentials
-//  */
-// userSchema.statics.findByCredentials = async function(email, password) {
-//   const User = this;
-//   const user = await User.findOne({ email });
-//   if (!user) throw new Error('Unable to login');
-
-//   const isMatch = await bcrypt.compare(password, user.password);
-//   if (!isMatch) throw new Error('Unable to login');
-
-//   return user;
-// };
-
-// const User = mongoose.model('User', userSchema);
-
-// export default User;
+const User = mongoose.model("User", userSchema);
+export default User;

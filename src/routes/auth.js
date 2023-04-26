@@ -1,5 +1,5 @@
-import express from 'express';
-import { login, register } from '../../controllers/auth';
+import express from "express";
+import { login, register } from "../controllers/auth.js";
 
 const router = express.Router();
 
@@ -8,13 +8,13 @@ const router = express.Router();
  * @desc    Login a user
  * @access  Public
  */
-router.post('/login', login);
+router.post("/login", login);
 
 /**
  * @route   POST /auth/register
  * @desc    Register a new user
  * @access  Public
  */
-router.post('/register', register);
+router.post("/register", register);
 
 export default router;
