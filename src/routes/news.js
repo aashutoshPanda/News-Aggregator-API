@@ -7,8 +7,8 @@ import {
   getNewsByKeyword,
   getNewsByUserPreferences,
 } from "../controllers/news.js";
-const router = express.Router();
 
+const router = express.Router();
 /**
  * @route   POST /news/:id/read
  * @desc    Mark a news article as READ for a user
