@@ -1,8 +1,5 @@
 import express from "express";
-import {
-  getPreferences,
-  updatePreferences,
-} from "../controllers/preferences.js";
+import { getPreferences, updatePreferences } from "../controllers/preferences.js";
 const router = express.Router();
 
 /**

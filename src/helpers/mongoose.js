@@ -10,10 +10,7 @@ const connectDB = async () => {
     );
   } catch ({ message }) {
     console.error("Error with mongo setup", message);
-    console.log(
-      "%s MongoDB connection error. Please make sure MongoDB is running.",
-      chalk.red("✗")
-    );
+    console.log("%s MongoDB connection error. Please make sure MongoDB is running.", chalk.red("✗"));
     // Exit process with failure
     process.exit(1);
   }

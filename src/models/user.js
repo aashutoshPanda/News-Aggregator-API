@@ -7,6 +7,15 @@ const userSchema = new Schema({
     minlength: [2, "Full name must be at least 2 characters"],
     maxlength: [100, "Full name can have at most 100 characters"],
     trim: true,
+    validate: {
+      validator: function (value) {
+        // Define your custom validation logic here
+        // Return true if value is valid, otherwise return false
+        const fullNameRegex = /^[A-Za-z]+([\s]?[A-Za-z]+)*$/;
+        return fullNameRegex.test(value);
+      },
+      message: (props) => `${props.value} is not a valid full name!`,
+    },
   },
   email: {
     type: String,
