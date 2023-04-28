@@ -1,6 +1,6 @@
-const mongoose = require("mongoose");
+import mongoose, { Schema } from "mongoose";
 
-const categorySchema = new mongoose.Schema({
+const categorySchema = new Schema({
   name: {
     type: String,
     required: [true, "Category name is required"],
@@ -11,6 +11,4 @@ const categorySchema = new mongoose.Schema({
   lastUpdated: { type: Date, default: Date.now },
 });
 
-const Category = mongoose.model("Category", categorySchema);
-
-module.exports = Category;
+export const Category = mongoose.model("Category", categorySchema);

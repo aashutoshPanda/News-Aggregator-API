@@ -2,23 +2,28 @@
  * Auth middleware
  */
 import jwt from "jsonwebtoken";
-import User from "../models/User.js";
+import { User } from "../models/user.js";
 
-const auth = async (req, res, next) => {
+export const isAuthenticated = async (req, res, next) => {
   try {
     const token = req.header("Authorization").replace("Bearer ", "");
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findOne({
-      _id: decoded._id,
-      "tokens.token": token,
+    console.log({ secret: process.env.API_SECRET });
+    jwt.verify(token, process.env.API_SECRET, async (err, authData) => {
+      if (err) {
+        console.log(err);
+        res.sendStatus(403);
+      } else {
+        const user = await User.findById(authData.id);
+        if (!user) {
+          res.sendStatus(403);
+        } else {
+          req.user = user;
+          next();
+        }
+      }
     });
-    if (!user) throw new Error();
-    req.token = token;
-    req.user = user;
-    next();
-  } catch (e) {
+  } catch (err) {
+    console.log(err);
     res.status(401).send({ error: "Please authenticate." });
   }
 };
-
-export default auth;

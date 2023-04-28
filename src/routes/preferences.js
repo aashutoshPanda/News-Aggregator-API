@@ -1,6 +1,6 @@
 import express from "express";
 import {
-  setPreferences,
+  getPreferences,
   updatePreferences,
 } from "../controllers/preferences.js";
 const router = express.Router();
@@ -10,7 +10,7 @@ const router = express.Router();
  * @desc    Get the preferences of the logged in user
  * @access  Private
  */
-router.get("", setPreferences);
+router.get("", getPreferences);
 
 /**
  * @route   PUT /preferences

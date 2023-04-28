@@ -1,6 +1,6 @@
-const mongoose = require("mongoose");
+import mongoose, { Schema } from "mongoose";
 
-const userSchema = new mongoose.Schema({
+const userSchema = new Schema({
   fullName: {
     type: String,
     required: [true, "Full name is required"],
@@ -24,14 +24,26 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ["user", "admin"],
+    enum: ["USER", "ADMIN"],
     default: "user",
   },
   createdAt: { type: Date, default: Date.now },
   favourites: [{ type: mongoose.Schema.Types.ObjectId, ref: "News" }],
   read: [{ type: mongoose.Schema.Types.ObjectId, ref: "News" }],
+  preferences: {
+    type: [
+      {
+        type: String,
+        maxlength: 20,
+      },
+    ],
+    validate: {
+      validator: function (v) {
+        return Array.isArray(v) && v.every((val) => typeof val === "string");
+      },
+      message: "Preferences should be an array of strings",
+    },
+  },
 });
 
-const User = mongoose.model("User", userSchema);
-
-module.exports = User;
+export const User = mongoose.model("User", userSchema);

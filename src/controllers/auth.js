@@ -25,13 +25,14 @@ export const login = async (req, res) => {
     }
 
     // make JWT token
-    const token = createToken();
+    const token = createToken(user.id);
     res.status(200).send({
       user,
       message: "Login successfull",
       accessToken: token,
     });
   } catch (err) {
+    console.log(err);
     return res.status(500).send({
       message: "There was an issue with the server while logging in",
     });

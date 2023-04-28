@@ -1,3 +1,3 @@
-export { default as User } from "./User.js";
-export { default as News } from "./News.js";
-export { default as Category } from "./Category.js";
+export { default as User } from "./user.js";
+export { default as News } from "./news.js";
+export { default as Category } from "./category.js";
