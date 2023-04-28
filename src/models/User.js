@@ -1,42 +1,37 @@
-import mongoose from "mongoose";
-const Schema = mongoose.Schema;
+const mongoose = require("mongoose");
 
-/**
- * User Schema
- */
-const userSchema = new Schema({
+const userSchema = new mongoose.Schema({
   fullName: {
     type: String,
-    required: [true, "fullname not provided "],
+    required: [true, "Full name is required"],
+    minlength: [2, "Full name must be at least 2 characters"],
+    maxlength: [100, "Full name can have at most 100 characters"],
+    trim: true,
   },
   email: {
     type: String,
-    unique: [true, "email already exists in database!"],
-    lowercase: true,
+    required: [true, "Email address is required"],
+    unique: true,
     trim: true,
-    required: [true, "email not provided"],
-    validate: {
-      validator: function (email) {
-        const re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-        return re.test(email);
-      },
-      message: "{VALUE} is not a valid email!",
-    },
-  },
-  role: {
-    type: String,
-    enum: ["NORMAL", "ADMIN"],
-    required: [true, "Please specify user role"],
+    lowercase: true,
+    match: [/^\S+@\S+\.\S+$/, "Invalid email address"],
   },
   password: {
     type: String,
-    required: true,
+    required: [true, "Password is required"],
+    minlength: [8, "Password must be at least 8 characters"],
+    maxlength: [100, "Password can have at most 100 characters"],
   },
-  created: {
-    type: Date,
-    default: Date.now,
+  role: {
+    type: String,
+    enum: ["user", "admin"],
+    default: "user",
   },
+  createdAt: { type: Date, default: Date.now },
+  favourites: [{ type: mongoose.Schema.Types.ObjectId, ref: "News" }],
+  read: [{ type: mongoose.Schema.Types.ObjectId, ref: "News" }],
 });
 
 const User = mongoose.model("User", userSchema);
-export default User;
+
+module.exports = User;
