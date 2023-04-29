@@ -15,3 +15,10 @@ export const getNews = async (preference) => {
 
   return { preference, news: apiResults.articles };
 };
+
+export const getNewsArticlesByPreference = (userPreference, articlesByPreferenceArray) => {
+  const requiredData = articlesByPreferenceArray.filter(({ preference }) => preference == userPreference);
+  if (requiredData) {
+    return requiredData[0].news;
+  }
+};

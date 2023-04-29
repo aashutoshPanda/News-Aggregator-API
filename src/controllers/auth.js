@@ -53,7 +53,6 @@ export const register = async (req, res) => {
       password: bcrypt.hashSync(password, 8),
     });
     try {
-      await user.validate(); // check if the user document is valid
       await user.save(); // save the user document to the database
     } catch (err) {
       return res.status(400).send(err);

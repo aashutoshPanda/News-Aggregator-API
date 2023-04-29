@@ -10,7 +10,7 @@ const newsSchema = new Schema({
   },
   content: {
     type: String,
-    required: [true, "News content is required"],
+    required: false,
     minlength: [10, "News content must be at least 10 characters"],
   },
   url: {
@@ -29,9 +29,20 @@ const newsSchema = new Schema({
   category: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Category",
-    required: true,
   },
 });
+
+newsSchema.methods.addCategory = async function (categoryId) {
+  this.categories.addToSet(categoryId);
+  await this.save();
+  await CategoryNews.create({ categoryId, newsId: this._id });
+};
+
+newsSchema.methods.removeCategory = async function (categoryId) {
+  this.categories.pull(categoryId);
+  await this.save();
+  await CategoryNews.findOneAndDelete({ categoryId, newsId: this._id });
+};
 
 const News = mongoose.model("News", newsSchema);
 export default News;
