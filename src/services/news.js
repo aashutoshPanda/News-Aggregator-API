@@ -1,7 +1,7 @@
 const queryAPI = async (preference) => {
   try {
     const response = await fetch(
-      `https://newsapi.org/v2/everything?q=${preference}&pageSize=10&apiKey=${process.env.NEW_API_KEY}`
+      `https://newsapi.org/v2/top-headlines?category=${preference}&apiKey=${process.env.NEW_API_KEY}`
     );
     const data = await response.json();
     return data;

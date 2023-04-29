@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import { getUserByEmail, createToken } from "../services/user.js";
-import { User } from "../models/user.js";
+import User from "../models/user.js";
 /**
  * @desc Login a user
  */

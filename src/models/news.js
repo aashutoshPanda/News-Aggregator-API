@@ -33,4 +33,5 @@ const newsSchema = new Schema({
   },
 });
 
-export const News = mongoose.model("News", newsSchema);
+const News = mongoose.model("News", newsSchema);
+export default News;
