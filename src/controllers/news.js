@@ -1,5 +1,5 @@
-import { getNews, getNewsArticlesByPreference } from "../services/news.js";
-import { User, News, Category } from "../models/index.js";
+import { getNewsByPreference, getProperNewsJSON, queryAPIByKeyword } from "../services/news.js";
+import { User, News } from "../models/index.js";
 
 /**
  * @desc mark the given news id as read for the current user
@@ -7,8 +7,12 @@ import { User, News, Category } from "../models/index.js";
 export const markNewsAsRead = async (req, res) => {
   try {
     const user = await User.findById(req.user.id); // assuming you're using some kind of authentication middleware to add the user object to the request object
-    const news = await News.findById(req.params.id);
+    const news = await News.findOne({ urlHash: req.params.id }).select("-__v");
 
+    // no match found for the hash
+    if (!news) {
+      return res.status(404).json({ message: "Invalid news id passed" });
+    }
     // Check if news already exists in the user's read list
     if (user.read.includes(news._id)) {
       return res.status(400).json({ message: "News already added to read list" });
@@ -18,7 +22,8 @@ export const markNewsAsRead = async (req, res) => {
     user.read.push(news._id);
     await user.save();
 
-    res.json(news);
+    const properNewsJSON = getProperNewsJSON(news);
+    res.send(properNewsJSON);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
@@ -31,18 +36,23 @@ export const markNewsAsRead = async (req, res) => {
 export const markNewsAsFavourite = async (req, res) => {
   try {
     const user = await User.findById(req.user.id); // assuming you're using some kind of authentication middleware to add the user object to the request object
-    const news = await News.findById(req.params.id);
+    const news = await News.findOne({ urlHash: req.params.id }).select("-__v");
 
-    // Check if news already exists in the user's favourites list
-    if (user.favourites.includes(news._id)) {
-      return res.status(400).json({ message: "News already added to favourites list" });
+    // no match found for the hash
+    if (!news) {
+      return res.status(404).json({ message: "Invalid news id passed" });
     }
+    // Check if news already exists in the user's favourites list
+    // if (user.favourites.includes(news._id)) {
+    //   return res.status(400).json({ message: "News already added to favourites list" });
+    // }
 
     // Add news to user's favourites list
     user.favourites.push(news._id);
     await user.save();
 
-    res.json(news);
+    const properNewsJSON = getProperNewsJSON(news);
+    res.send(properNewsJSON);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
@@ -54,9 +64,9 @@ export const markNewsAsFavourite = async (req, res) => {
  */
 export const getReadNews = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).populate("read", "title description url publishedAt category");
-
-    res.json({ news: user.read });
+    const user = await User.findById(req.user.id).populate("read", "title description url publishedAt urlHash");
+    const readNews = user.read.map((news) => getProperNewsJSON(news));
+    res.send(readNews);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
@@ -68,7 +78,7 @@ export const getReadNews = async (req, res) => {
  */
 export const getFavouriteNews = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).populate("favourites", "title description url publishedAt");
+    const user = await User.findById(req.user.id).populate("favourites", "title description url publishedAt urlHash");
 
     res.json({ news: user.favourites });
   } catch (error) {
@@ -83,9 +93,9 @@ export const getFavouriteNews = async (req, res) => {
 export const getNewsByKeyword = async (req, res) => {
   try {
     const { keyword } = req.params;
-    const response = await fetch(`https://newsapi.org/v2/top-headlines?q=${keyword}&apiKey=${process.env.NEW_API_KEY}`);
-    const responseJSON = await response.json();
+    const responseJSON = await queryAPIByKeyword(keyword);
     const articles = responseJSON.articles;
+
     return res.status(200).send(articles);
   } catch (error) {
     console.error(error);
@@ -105,7 +115,7 @@ export const getNewsByUserPreferences = async (req, res) => {
       });
     }
     // get news by querying the API
-    const promises = preferences.map((preference) => getNews(preference));
+    const promises = preferences.map((preference) => getNewsByPreference(preference));
 
     // newsByPreferenceArray will have output like [
     // [
@@ -119,43 +129,7 @@ export const getNewsByUserPreferences = async (req, res) => {
     //   },
     // ];
     const newsByPreferenceArray = await Promise.all(promises);
-
-    // Storing the articles received in DB
-    const promisesStoreNewsArticlesAndCategoriesInDB = preferences.map(async (preference) => {
-      // check if this category is present or not, if not make one
-      let category = await Category.findOne({ name: preference });
-      if (!category) {
-        category = new Category({
-          name: preference,
-        });
-        await category.save();
-      }
-      // Now we have our category, so the articles fetched for this category will be added to it
-      const articlesOfCurrentPreference = getNewsArticlesByPreference(preference, newsByPreferenceArray);
-      const promisesStoreNewsArticlesinDB = articlesOfCurrentPreference.map(async (article) => {
-        const { url, content, publishedAt, author, title } = article;
-        let newsMongoObj = await News.findOne({ url });
-        if (!newsMongoObj) {
-          newsMongoObj = new News({
-            url,
-            content,
-            publishedAt,
-            author,
-            title,
-          });
-          await newsMongoObj.save();
-        }
-        // Now we have the news item from the DB, we will put the correct category here
-        if (newsMongoObj.category && !preference in newsMongoObj.category) {
-          await newsMongoObj.addCategory(preference);
-        }
-        return newsMongoObj;
-      });
-      const resultsPromisesStoreNewsArticlesinDB = await Promise.all(promisesStoreNewsArticlesinDB);
-      return { preference, articles: resultsPromisesStoreNewsArticlesinDB };
-    });
-    const resultsPromisesStoreNewsArticlesInDB = await Promise.all(promisesStoreNewsArticlesAndCategoriesInDB);
-    res.send(resultsPromisesStoreNewsArticlesInDB);
+    res.send(newsByPreferenceArray);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
