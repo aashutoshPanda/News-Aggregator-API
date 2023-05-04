@@ -1,5 +1,6 @@
 import crypto from "crypto";
 import News from "../models/news.js";
+import { setValueRedis, getValueRedis } from "../redisClient.js";
 
 const addHashToArticlesAndSave = async (articles) => {
   const promises = articles.map(async (article) => {
@@ -15,11 +16,16 @@ const addHashToArticlesAndSave = async (articles) => {
 };
 export const queryAPIByCategory = async (preference) => {
   try {
+    const cacheValue = await getValueRedis(`preference-${preference}`);
+    if (cacheValue !== null) return cacheValue;
+
     const response = await fetch(
       `https://newsapi.org/v2/top-headlines?category=${preference}&apiKey=${process.env.NEW_API_KEY}&pageSize=5`
     );
     const data = await response.json();
     addHashToArticlesAndSave(data.articles);
+
+    await setValueRedis(`preference-${preference}`, data);
     return data;
   } catch (error) {
     console.error(error);
@@ -27,11 +33,15 @@ export const queryAPIByCategory = async (preference) => {
 };
 export const queryAPIByKeyword = async (query) => {
   try {
+    const cacheValue = await getValueRedis(`query-${query}`);
+    if (cacheValue !== null) return cacheValue;
+
     const response = await fetch(
       `https://newsapi.org/v2/everything?q=${query}&apiKey=${process.env.NEW_API_KEY}&pageSize=5`
     );
     const data = await response.json();
     addHashToArticlesAndSave(data.articles);
+    await setValueRedis(`query-${query}`, data);
     return data;
   } catch (error) {
     console.error(error);

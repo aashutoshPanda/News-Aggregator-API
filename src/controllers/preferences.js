@@ -1,5 +1,4 @@
 import User from "../models/user.js";
-
 /**
  * @desc get preferences for a user
  */

@@ -7,7 +7,6 @@ import User from "../models/user.js";
 export const isAuthenticated = async (req, res, next) => {
   try {
     const token = req.header("Authorization").replace("Bearer ", "");
-    console.log({ secret: process.env.API_SECRET });
     jwt.verify(token, process.env.API_SECRET, async (err, authData) => {
       if (err) {
         console.log(err);
