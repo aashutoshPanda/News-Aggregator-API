@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import { getUserByEmail, createToken } from "../services/user.js";
+import { getUserByEmail, createToken, createNewUser } from "../services/user.js";
 import User from "../models/user.js";
 /**
  * @desc Login a user
@@ -46,17 +46,8 @@ export const login = async (req, res) => {
 export const register = async (req, res) => {
   try {
     const { fullName, email, role, password } = req.body;
-    const user = new User({
-      fullName,
-      email,
-      role,
-      password: bcrypt.hashSync(password, 8),
-    });
-    try {
-      await user.save(); // save the user document to the database
-    } catch (err) {
-      return res.status(400).send(err);
-    }
+    const user = await createNewUser({ fullName, email, role, password });
+
     res.status(200).send({
       user,
       message: "User Registered successfully",

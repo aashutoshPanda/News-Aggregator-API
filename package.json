@@ -9,7 +9,8 @@
     "debug": "nodemon --inspect index.js",
     "redis-start": "sudo systemctl start redis",
     "redis-status": "sudo systemctl status redis",
-    "redis-stop": "sudo systemctl stop redis"
+    "redis-stop": "sudo systemctl stop redis",
+    "test": "mocha --recursive 'test/**/*.js' --timeout 5000 --exit"
   },
   "repository": {
     "type": "git",
@@ -24,7 +25,6 @@
   "homepage": "https://github.com/georgesimos/nodejs-mvc-starter#readme",
   "dependencies": {
     "bcrypt": "^5.1.0",
-    "chalk": "^5.2.0",
     "crypto": "^1.0.1",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
@@ -34,8 +34,13 @@
     "redis": "^4.6.6"
   },
   "devDependencies": {
+    "chai": "^4.3.7",
+    "chai-http": "^4.3.0",
+    "faker": "^5.5.3",
+    "mocha": "^10.2.0",
     "nodemon": "^2.0.22",
-    "prettier": "^2.8.8"
+    "prettier": "^2.8.8",
+    "sinon": "^15.0.4"
   },
   "prettier": {
     "printWidth": 120
