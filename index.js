@@ -3,6 +3,7 @@ import logger from "morgan";
 import dotenv from "dotenv";
 import connectDB from "./src/helpers/mongoose.js";
 import routes from "./src/routes/index.js";
+import rateLimit from "express-rate-limit";
 
 // Make all variables from our .env file available in our process
 dotenv.config({ path: ".env.example" });
@@ -14,6 +15,15 @@ console.log("URI", process.env.MONGODB_URI);
 // Connect to MongoDB.
 connectDB();
 
+//rate limit
+
+const limiter = rateLimit({
+  windowMs: 10 * 1000,
+  max: 3,
+  message: "Too many requests from this IP, please try again later.",
+});
+
+app.use(limiter);
 // Middlewares & configs setup
 app.use(logger("dev"));
 app.use(express.json());
@@ -22,7 +32,7 @@ app.use(express.urlencoded({ extended: true }));
 // Here we define the api routes
 app.use(routes);
 
-const port = process.env.PORT || 8081;
+const port = process.env.PORT || 8080;
 const address = process.env.SERVER_ADDRESS || "localhost";
 
 app.get("/", (req, res) => res.send("Hello World!"));

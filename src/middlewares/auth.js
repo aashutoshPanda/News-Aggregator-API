@@ -9,11 +9,12 @@ export const isAuthenticated = async (req, res, next) => {
     const token = req.header("Authorization").replace("Bearer ", "");
     jwt.verify(token, process.env.API_SECRET, async (err, authData) => {
       if (err) {
-        console.log(err);
+        console.log("Error from auth middleware", err);
         res.sendStatus(403);
       } else {
         const user = await User.findById(authData.id);
         if (!user) {
+          console.log("Error from auth middleware", err);
           res.sendStatus(403);
         } else {
           req.user = user;

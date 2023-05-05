@@ -21,7 +21,7 @@ export const createNewUser = async ({ fullName, email, role, password }) => {
   });
 
   await user.save(); // save the user document to the database
-  return { user };
+  return user;
 };
 
 export const deleteAllUsers = async () => {
