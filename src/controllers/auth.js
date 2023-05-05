@@ -1,18 +1,23 @@
 import bcrypt from "bcrypt";
 import { getUserByEmail, createToken, createNewUser } from "../services/user.js";
-import User from "../models/user.js";
+import { UserValidator } from "../helpers/validators.js";
 /**
  * @desc Login a user
  */
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
+    if (!UserValidator.allLoginValuesProvided({ email, password })) {
+      return res.status(400).send({
+        message: "email & password are required",
+      });
+    }
     const user = await getUserByEmail(email);
 
     // no users with that email were found
     if (!user) {
       return res.status(404).send({
-        message: "User Not found.",
+        message: "User not found.",
       });
     }
 
@@ -21,7 +26,7 @@ export const login = async (req, res) => {
     if (!isPasswordValid) {
       return res.status(401).send({
         accessToken: null,
-        message: "Invalid Password!",
+        message: "Incorrect Password!",
       });
     }
 
@@ -29,7 +34,7 @@ export const login = async (req, res) => {
     const token = createToken(user.id);
     res.status(200).send({
       user,
-      message: "Login successfull",
+      message: "Login successful",
       accessToken: token,
     });
   } catch (err) {
@@ -46,9 +51,14 @@ export const login = async (req, res) => {
 export const register = async (req, res) => {
   try {
     const { fullName, email, role, password } = req.body;
+    if (!UserValidator.allSignupValuesProvided({ fullName, email, role, password })) {
+      return res.status(400).send({
+        message: "fullName, email, role & password are required",
+      });
+    }
     const user = await createNewUser({ fullName, email, role, password });
 
-    res.status(200).send({
+    return res.status(200).send({
       user,
       message: "User Registered successfully",
     });
@@ -62,7 +72,7 @@ export const register = async (req, res) => {
         .trim();
       return res.status(400).json({ message: `${field} must be unique.` });
     }
-    res.status(500).send({
+    return res.status(500).send({
       message: "There was an issue with the server while signup",
     });
   }
