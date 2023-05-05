@@ -35,9 +35,26 @@ describe("verifies register flow", () => {
       .post("/auth/register/")
       .send(registerBody)
       .end((err, res) => {
-        console.log({ err, res });
         expect(res.status).equal(200);
         expect(res.body.message).equal("User Registered successfully");
+        done();
+      });
+  });
+
+  it("Email already exists", (done) => {
+    const registerBody = {
+      fullName: "Ashutosh Panda",
+      email: "iamashutoshpanda@gmail.com",
+      role: "ADMIN",
+      password: "password",
+    };
+    chai
+      .request(app)
+      .post("/auth/register/")
+      .send(registerBody)
+      .end((err, res) => {
+        expect(res.status).equal(400);
+        expect(res.body.message).equal("email_1 dup must be unique.");
         done();
       });
   });
