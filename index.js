@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import connectDB from "./src/helpers/mongoose.js";
 import routes from "./src/routes/index.js";
 import rateLimit from "express-rate-limit";
+import loggerMiddleware from "./src/middlewares/logger.js";
 
 // Make all variables from our .env file available in our process
 dotenv.config({ path: ".env.example" });
@@ -24,6 +25,7 @@ const limiter = rateLimit({
 });
 
 app.use(limiter);
+app.use(loggerMiddleware());
 // Middlewares & configs setup
 app.use(logger("dev"));
 app.use(express.json());

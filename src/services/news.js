@@ -1,6 +1,6 @@
 import crypto from "crypto";
 import News from "../models/news.js";
-import { setValueRedis, getValueRedis } from "../redisClient.js";
+import { setValueRedis, getValueRedis } from "../helpers/redisClient.js";
 
 const addHashToArticlesAndSave = async (articles) => {
   const promises = articles.map(async (article) => {
