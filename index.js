@@ -14,7 +14,7 @@ const app = express();
 
 console.log("URI", process.env.MONGODB_URI);
 // Connect to MongoDB.
-connectDB();
+await connectDB();
 
 //rate limit
 
@@ -23,8 +23,9 @@ const limiter = rateLimit({
   max: 3,
   message: "Too many requests from this IP, please try again later.",
 });
-
-app.use(limiter);
+if (process.env.NODE_ENV !== "TEST") {
+  app.use(limiter);
+}
 app.use(loggerMiddleware());
 // Middlewares & configs setup
 app.use(logger("dev"));

@@ -1,5 +1,3 @@
-process.env.NODE_ENV = "TEST";
-
 import chai from "chai";
 import chaiHttp from "chai-http";
 import app from "../../index.js";

@@ -10,7 +10,7 @@
     "redis-start": "sudo systemctl start redis",
     "redis-status": "sudo systemctl status redis",
     "redis-stop": "sudo systemctl stop redis",
-    "test": "mocha --recursive 'test/**/*.js' --timeout 15000 --exit"
+    "test": "NODE_ENV=TEST mocha --recursive 'test/**/*.js' --timeout 15000 --exit"
   },
   "repository": {
     "type": "git",
