@@ -12,7 +12,6 @@ dotenv.config({ path: ".env.example" });
 // Init express server
 const app = express();
 
-console.log("URI", process.env.MONGODB_URI);
 // Connect to MongoDB.
 await connectDB();
 

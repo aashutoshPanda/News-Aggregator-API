@@ -2,18 +2,24 @@ import crypto from "crypto";
 import News from "../models/news.js";
 import { setValueRedis, getValueRedis } from "../helpers/redisClient.js";
 
+export const addOrUpdateNewsInDB = async (article) => {
+  const hash = crypto.createHash("md5").update(article.url).digest("hex");
+  article.newsId = hash;
+  const newsObject = await News.findOneAndUpdate(
+    { urlHash: hash }, // search criteria
+    article,
+    { upsert: true, new: true } // options: create new document if not found
+  );
+  return newsObject;
+};
+
 const addHashToArticlesAndSave = async (articles) => {
   const promises = articles.map(async (article) => {
-    const hash = crypto.createHash("md5").update(article.url).digest("hex");
-    article.newsId = hash;
-    const articleDB = await News.findOneAndUpdate(
-      { urlHash: hash }, // search criteria
-      article,
-      { upsert: true, new: true } // options: create new document if not found
-    );
+    await addOrUpdateNewsInDB(article);
   });
   await Promise.all(promises);
 };
+
 export const queryAPIByCategory = async (preference) => {
   try {
     const cacheValue = await getValueRedis(`preference-${preference}`);
