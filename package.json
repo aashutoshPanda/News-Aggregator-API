@@ -1,5 +1,5 @@
 {
-  "name": "nodejs-mvc-starter",
+  "name": "news-aggregator-api",
   "version": "1.0.0",
   "description": "Nodejs Starter - A boilerplate for Node.js mvc web applications",
   "main": "index.js",
@@ -10,19 +10,19 @@
     "redis-start": "sudo systemctl start redis",
     "redis-status": "sudo systemctl status redis",
     "redis-stop": "sudo systemctl stop redis",
-    "test": "NODE_ENV=TEST mocha --recursive 'test/**/*.js' --timeout 15000 --exit"
+    "test": "NODE_ENV=TEST c8 mocha --recursive 'test/**/*.js' --timeout 15000 --exit"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/georgesimos/nodejs-mvc-starter.git"
+    "url": "git+https://github.com/aashutoshPanda/News-Aggregator-API.git"
   },
   "keywords": [],
-  "author": "George Simos",
+  "author": "Ashutosh Panda",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/georgesimos/nodejs-mvc-starter/issues"
+    "url": "https://github.com/aashutoshPanda/News-Aggregator-API/issues"
   },
-  "homepage": "https://github.com/georgesimos/nodejs-mvc-starter#readme",
+  "homepage": "https://github.com/aashutoshPanda/News-Aggregator-API#readme",
   "dependencies": {
     "bcrypt": "^5.1.0",
     "crypto": "^1.0.1",
@@ -35,6 +35,7 @@
     "redis": "^4.6.6"
   },
   "devDependencies": {
+    "c8": "^7.13.0",
     "chai": "^4.3.7",
     "chai-http": "^4.3.0",
     "faker": "^5.5.3",

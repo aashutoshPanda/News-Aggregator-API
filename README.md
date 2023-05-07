@@ -4,7 +4,6 @@ RESTful API that allows users to fetch news articles from multiple sources based
 
 POSTMAN DOCS - [link](https://documenter.getpostman.com/view/7984450/2s93eSYupv)
 
-
 # News-Aggregator-API
 
 RESTful API that allows users to fetch news articles from multiple sources based on their preferences.
@@ -16,7 +15,9 @@ Checklist
 - [x] Rate limiting
 - [x] Caching with Redis
 - [x] Validation
-- [ ] Tests [in progress]
+- [x] Tests
+- [x] Coverage
+- [ ] Increase coverage [Currently - 71.94% Statements 482/67077.04% Branches 47/6158.06% Functions 18/3171.94% Lines 482/670]
 - [x] Logging
 - [x] JWT Auth
 - [x] Mongo DB integration
